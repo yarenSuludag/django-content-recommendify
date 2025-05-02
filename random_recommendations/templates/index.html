@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Günün Önerileri 🎶</title>
+    <style>
+        /* Sayfa Genel Stili */
+        body { 
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            text-align: center;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-top: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Öneri Kartları */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .recommendation {
+            width: 320px;
+            height: auto;
+            border-radius: 15px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            text-align: center;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .recommendation img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        /* Öneri Türlerine Özel Çerçeveler */
+        .film {
+            border: 10px solid black;
+            background: radial-gradient(circle, #222 20%, #000 90%);
+            color: white;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .series {
+            border: 10px solid gray;
+            background: linear-gradient(45deg, #333, #666);
+            color: white;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .anime {
+            border: 5px dashed #ff6b81;
+            background: white;
+            font-family: 'Comic Sans MS', sans-serif;
+            color: black;
+        }
+
+        .music {
+            border: 8px solid darkred;
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+        }
+
+        .documentary {
+            border: 8px solid brown;
+            background: #f5f5dc;
+            font-style: italic;
+            color: #333;
+        }
+
+        /* Butonlar */
+        .btn {
+            background: linear-gradient(45deg, #ff6b81, #ff4757);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s ease-in-out, transform 0.2s;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            transform: scale(1.05);
+        }
+
+        /* Favorilere Ekle Butonu */
+        .fav-btn {
+            background: gold;
+            color: black;
+            font-weight: bold;
+        }
+
+        .fav-btn:hover {
+            background: orange;
+        }
+
+        /* Güzel Sözler */
+        .quote {
+            font-size: 18px;
+            font-style: italic;
+            margin-top: 20px;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎬 Günün Önerileri 🎶</h1>
+    
+    <p class="quote">"Hayat, keşfettiğin hikâyelerle daha renkli!" 🌟</p>
+
+    <button class="btn" onclick="loadRecommendations()">🔄 Yeni Öneriler Getir</button>
+    <button class="btn fav-btn" onclick="showFavorites()">⭐ Favorileri Göster</button>
+
+    <div class="container" id="recommendations"></div>
+
+    <script>
+        let favorites = [];
+
+        function loadRecommendations() {
+            document.getElementById("recommendations").innerHTML = "<p style='color:white;'>Öneriler yükleniyor... ⏳</p>";
+
+            fetch("/api/recommendations/")
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById("recommendations");
+                    container.innerHTML = ""; 
+
+                    data.forEach(item => {
+                        const div = document.createElement("div");
+                        div.classList.add("recommendation");
+
+                        // Öneriye göre özel çerçeve ekle
+                        let frameClass = "";
+                        if (item.category === "film") frameClass = "film";
+                        else if (item.category === "series") frameClass = "series";
+                        else if (item.category === "anime") frameClass = "anime";
+                        else if (item.category === "music") frameClass = "music";
+                        else if (item.category === "documentary") frameClass = "documentary";
+
+                        div.classList.add(frameClass);
+
+                        div.innerHTML = `
+                            <h2>${item.title} (${item.category.toUpperCase()})</h2>
+                            <img src="${item.image_url}" alt="${item.title}">
+                            <p>${item.description}</p>
+                            ${item.rating ? `<p><strong>IMDb Puanı:</strong> ⭐ ${item.rating}</p>` : ""}
+                            ${item.year ? `<p><strong>Çıkış Yılı:</strong> 📅 ${item.year}</p>` : ""}
+                            <a href="${item.source_url}" target="_blank" class="source-link">📌 Detayları Gör</a>
+                            <br><button class="btn fav-btn" onclick="addToFavorites('${item.title}', '${item.source_url}')">⭐ Favorilere Ekle</button>
+                        `;
+
+                        container.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    document.getElementById("recommendations").innerHTML = "<p style='color:white;'>Öneriler yüklenirken bir hata oluştu. 😢</p>";
+                    console.error("Hata:", error);
+                });
+        }
+
+        function addToFavorites(title, url) {
+            favorites.push({ title, url });
+            alert(`✅ "${title}" favorilere eklendi!`);
+        }
+
+        function showFavorites() {
+            if (favorites.length === 0) {
+                alert("Henüz favorilere eklenmiş öneri yok.");
+                return;
+            }
+
+            let favList = "⭐ Favori Önerileriniz:\n";
+            favorites.forEach(fav => {
+                favList += `📌 ${fav.title} - ${fav.url}\n`;
+            });
+
+            alert(favList);
+        }
+
+        loadRecommendations();
+    </script>
+
+</body>
+</html>
