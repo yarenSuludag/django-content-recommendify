@@ -4,9 +4,9 @@ import requests
 from django.http import JsonResponse
 
 # API Anahtarları
-TMDB_API_KEY = "19e720bc291a6010f4fc42ba47360ec0"
-SPOTIFY_CLIENT_ID = "3fc3c3967e3b4effba99c26e2717f31e"
-SPOTIFY_CLIENT_SECRET = "f25f70b0ae204ecf8c72d9984ec32494"
+TMDB_API_KEY = "YOUR_KEY"
+SPOTIFY_CLIENT_ID = "YOUR_KEY"
+SPOTIFY_CLIENT_SECRET = "YOUR_KEY"
 
 ### 📌 Film Önerisi Çekme
 def get_random_movie():
