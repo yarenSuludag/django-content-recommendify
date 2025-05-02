@@ -107,6 +107,18 @@ Visit: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ---
 
+## 📸 Screenshots of the Project
+
+Below are some screenshots from the application:
+
+![Page](images11/image11.png)
+
+
+
+
+
+---
+
 ## 📁 File Structure
 
 ```
